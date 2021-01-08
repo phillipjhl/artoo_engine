@@ -1,7 +1,7 @@
 from sensors import dht_sensor
 from relays import hvac
 from time import sleep
-import config
+import settings.dev as config
 import requests
 from requests import HTTPError
 
@@ -15,7 +15,9 @@ HEAT_SETTING: int = config.HEAT_SETTING
 COOL_SETTING: int = config.COOL_SETTING
 ACTIVE_SLEEP_LIMIT: int = config.ACTIVE_SLEEP_LIMIT
 ACTIVE_SLEEP_COUNTER: int = config.ACTIVE_SLEEP_COUNTER
+CLIENT_ACCESS_CODE: str = config.CLIENT_ACCESS_CODE
 
+HEADERS: dict = {'Authorization': f'Bearer {CLIENT_ACCESS_CODE}', 'Content-Type': 'application/json'}
 
 def read_sensor(sensor: dht_sensor.DHT_SENSOR):
     result = sensor.read_sensor()
@@ -29,8 +31,10 @@ def read_sensor(sensor: dht_sensor.DHT_SENSOR):
         sensor_data = {"temp": temp, "humidity": hum}
         try:
             print("Making requests")
-            response = requests.post("http://localhost:8000/api/sensors/data/", json={'name': "temperature", "values": temp, "sensor_id": 1})
-            response2 = requests.post("http://localhost:8000/api/sensors/data/", json={'name': "humidity", "values": hum, "sensor_id": 1})
+            # This will eventually match to the main hub hostname
+            # These requests need to match against the config for the particular hostname including the sensor_id, and types, along with auth code
+            response = requests.post("http://localhost:8000/api/sensors/data/", json={'name': "temperature", "values": temp, "sensor_id": 1}, headers=HEADERS)
+            response2 = requests.post("http://localhost:8000/api/sensors/data/", json={'name': "humidity", "values": hum, "sensor_id": 1}, headers=HEADERS)
         except HTTPError as error:
             print(error)
         finally:
