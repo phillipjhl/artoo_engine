@@ -8,6 +8,7 @@ from sensors import dht_sensor
 from relays import hvac
 from services.oauth2.service import get_oauth2_token
 from services.oauth_service import get_oauth_token
+from services.utils import c_to_f
 
 DHT22_1 = dht_sensor.DHT_SENSOR("DHT22", temp_format="C")
 SYSTEM_STATE: str = config.SYSTEM_STATE
@@ -35,11 +36,6 @@ def set_oauth_data():
     }
 
 
-def c_to_f(temp):
-    f = (temp * 1.8) + 32
-    return f
-
-
 def read_sensor(sensor: dht_sensor.DHT_SENSOR):
     result = sensor.read_sensor()
     # print(result)
@@ -57,6 +53,8 @@ def read_sensor(sensor: dht_sensor.DHT_SENSOR):
             # if there is an access token and it is not expired, use it
             # else get a new token
             if OAUTH_DATA is None:
+                set_oauth_data()
+            elif OAUTH_DATA["expiration"] < now:
                 set_oauth_data()
 
                 # if OAUTH_DATA["expiration"] < now:
@@ -86,12 +84,6 @@ def read_sensor(sensor: dht_sensor.DHT_SENSOR):
         print("Error when reading sensor")
         sleep(2)
         read_sensor(sensor)
-
-
-def test():
-    hvac.test_relays()
-    return
-
 
 def temp_in_range(check_delay, active_delay):
     global SYSTEM_STATE
@@ -133,7 +125,7 @@ def temp_outof_range(check_delay, active_delay):
         print("Verifying and activating system")
         SYSTEM_STATE = "ACTIVE"
         # activate relays
-        test()
+        hvac.test_relays()
         # real delay will be > 2 minutes
         sleep(check_delay)
 
