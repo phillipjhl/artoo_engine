@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+adafruit-dht = "*"
+board = "*"
+adafruit-blinka = "*"
+adafruit-circuitpython-dht = "*"
+smbus = "*"
+requests = "*"
+oauthlib = "*"
+requests-oauthlib = "*"
+
+[requires]
+python_version = "3.7"

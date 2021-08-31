@@ -1,0 +1,15 @@
+# Pycache
+__pycache__
+
+# Sql Lite
+db.sqlite3
+
+# Local Settings
+**/settings/dev.py
+**/settings/prod.py
+**/prod.py
+**/dev.py
+**/config/dev.js
+
+# VS Code
+.vscode/
